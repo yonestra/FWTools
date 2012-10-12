@@ -1,0 +1,75 @@
+/**
+
+2012-10-12 Shota Yonezawa
+
+※このスクリプトはFireworksで実行できます。
+
+■リサイズの比率の設定
+変数scaleに比率を指定すると
+scale倍のサイズにリサイズされます。
+
+■実行方法
+resize.jsfをダブルクリックするとダイアログが
+立ち上がります。
+リサイズしたい画像を選択して「開く」ボタンを
+押すと選択した全てのファイルをリサイズします。
+（Mac環境の場合）
+
+■上書きしたくない場合
+ソースの「リネームする場合」という部分を
+コメントアウト解除すると名前変更されます。
+
+間に合わせなので使い易いカスタマイズなど
+共有していただけると助かります。
+
+*/
+
+
+// 拡大・縮小比率
+var scale = 3 / 8;
+
+var folderPath = fw.locateDocDialog(999,[]);
+
+for ( var i = 0; i < folderPath.length; i++ ) {
+
+	var path = folderPath[i];
+	var file = fw.openDocument(folderPath[i], false, false);
+	var domW = file.width;
+	var domH = file.height;
+	//alert("h:" + file.height + " w:" + file.width);
+
+	var setH = domH * scale;
+	var setW = domW * scale;
+
+	var setRect = {left:0, top:0, right:setW, bottom:setH}
+
+	file.setDocumentCanvasSizeToDocumentExtents(true);
+	file.setSelectionBounds(setRect,"transformAttributes");
+	file.setDocumentCanvasSize(setRect, true);
+
+/*
+    // リネームする場合
+	var types = path.split(".");
+	if (types.length === 0) {
+		fw.closeDocument(file, false);
+	}
+	var type = types[types.length - 1];
+	switch(type) {
+		case "png":
+			path = path.replace(".png", "-resize.png");
+			break;
+		case "jpg":
+			path = path.replace(".jpg", "-resize.jpg");
+			break;
+		case "gif":
+			path = path.replace(".gif", "-resize.gif");
+			break;
+		default:
+			break;
+	}
+*/
+
+	fw.exportDocumentAs(null, path, null);
+	fw.closeDocument(file, false);
+
+}
